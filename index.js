@@ -1,26 +1,55 @@
-const containerDiv = document.getElementById("game-container");
-let player = {
-    name: "Ryan",
-    height: 30,
-    width: 30,
-    x: 0,
-    y: 0,
+const canvas = document.getElementById("gameCanvas");
+const ctx = canvas.getContext("2d");
+
+canvasSize = 400;
+playerSize = 30;
+let loopNumber = 0;
+
+const player = {
+  x: canvasSize / 2 - playerSize / 2,
+  y: canvasSize / 2 - playerSize / 2,
+  width: playerSize,
+  height: playerSize,
+  color: "white",
+};
+
+function gameLoop() {
+  clearCanvas();
+  drawPlayer();
+  moveBelt();
+  console.log("hello");
+  requestAnimationFrame(gameLoop);
 }
 
-function handleMouseMove(e) {
-    player.x = e.clientX - player.width / 2;
-    player.y = e.clientY - player.height / 2;
+function moveBelt() {
+  if (loopNumber < 300) {
+    player.x -= 1;
+  }
+  loopNumber++;
 }
 
-function renderPlayer() {
-    Array.from(containerDiv.children).forEach(el => el.remove());
-    containerDiv.innerHTML = `<div class="shadow" style="left: ${player.x}px; top: ${player.y}px; width: ${player.width}px; height: ${player.height}px"></div>`
+function clearCanvas() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
 }
 
-function onMouseMove(e) {
-    handleMouseMove(e);
-    renderPlayer();
+function drawPlayer() {
+  ctx.fillStyle = "white";
+  ctx.fillRect(player.x, player.y, player.width, player.height);
 }
 
+document.addEventListener("keydown", (event) => {
+  if (event.key === "w" && player.y > 0) {
+    player.y -= 10;
+  }
+  if (event.key === "s" && player.y + player.height < canvasSize) {
+    player.y += 10;
+  }
+  if (event.key === "a" && player.x > 0) {
+    player.x -= 10;
+  }
+  if (event.key === "d" && player.x + player.width < canvasSize) {
+    player.x += 10;
+  }
+});
 
-document.addEventListener("mousemove", onMouseMove);
+gameLoop();
