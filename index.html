@@ -8,10 +8,18 @@
     <script src="./index.js" defer></script>
 </head>
 <body>
+    <p>Click and drag to create walls</p>
     <canvas id="gameCanvas" width="400" height="400"></canvas>
     <div>
         <button id="random-block">Random Block</button>
         <button id="clear-blocks">Clear Blocks</button>
+    </div>
+    <div>
+        <label for="y">y</label>
+        <input id="y-speed" max="5" min="-5" value="2" type="number">
+        <label for="x">x</label>
+        <input id="x-speed" max="5" min="-5" value="3" type="number">
+        <button id="change-speed">Change Speed</button>
     </div>
 </body>
 </html>

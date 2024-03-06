@@ -1,17 +1,21 @@
-const clearBlocksButton = document.getElementById("clear-blocks")
-const randomBlockButton = document.getElementById("random-block")
+const body = document.querySelector("body");
+const clearBlocksButton = document.getElementById("clear-blocks");
+const randomBlockButton = document.getElementById("random-block");
+const speedButton = document.getElementById("change-speed");
+const yInput = document.getElementById("y-speed");
+const xInput = document.getElementById("x-speed");
 const canvas = document.getElementById("gameCanvas");
 const ctx = canvas.getContext("2d");
 
 canvasSize = 400;
 playerSize = 10;
-let loops = 0;
+let isMouseDown = false;
 
 const player = {
   x: canvasSize / 2,
   y: canvasSize / 2,
   xSpeed: 3,
-  ySpeed: -1,
+  ySpeed: 2,
   width: playerSize,
   height: playerSize,
   color: "white",
@@ -43,31 +47,59 @@ function randomBlock() {
   });
 }
 
-canvas.addEventListener('click', function(e) {
+function addBlock(e) {
   var mouseX = e.clientX - canvas.getBoundingClientRect().left;
   var mouseY = e.clientY - canvas.getBoundingClientRect().top;
 
   blocks.push({
-    y: mouseY - 20,
-    x: mouseX - 20,
-    height: 40,
-    width: 40,
+    y: mouseY - 10,
+    x: mouseX - 10,
+    height: 20,
+    width: 20,
   });
+}
+
+body.addEventListener("mousedown", function (e) {
+  isMouseDown = true;
+  addBlock(e);
 });
 
-clearBlocksButton.addEventListener('click', function(e) {
+canvas.addEventListener("mousemove", function (e) {
+  if (isMouseDown) {
+    addBlock(e);
+  }
+});
+
+body.addEventListener("mouseup", function () {
+  isMouseDown = false;
+});
+
+clearBlocksButton.addEventListener("click", clearBlocks);
+
+randomBlockButton.addEventListener("click", randomBlock);
+
+speedButton.addEventListener("click", changeSpeed);
+
+function changeSpeed() {
+  const y = parseInt(yInput.value);
+  const x = parseInt(xInput.value);
+
+  player.ySpeed = y;
+  player.xSpeed = x;
+}
+
+function clearBlocks() {
   blocks = [];
 }
-)
-randomBlockButton.addEventListener('click', function(e) {
-  blocks.push({
-    y: rng(canvasSize - 40),
-    x: rng(canvasSize - 40),
-    height: 40,
-    width: 40,
-  });
-})
 
+function randomBlock() {
+  blocks.push({
+    y: rng(canvasSize - 20),
+    x: rng(canvasSize - 20),
+    height: 20,
+    width: 20,
+  });
+}
 
 function checkBlockBoundaries() {
   {
@@ -160,8 +192,12 @@ document.addEventListener("keydown", (event) => {
   if (event.key === "d" && player.x + player.width < canvasSize) {
     player.x += 10;
   }
+  if (event.key === " ") {
+    randomBlock();
+  }
+  if (event.key === "c") {
+    clearBlocks();
+  }
 });
-
-
 
 gameLoop();
