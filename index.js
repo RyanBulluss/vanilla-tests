@@ -1,3 +1,5 @@
+const clearBlocksButton = document.getElementById("clear-blocks")
+const randomBlockButton = document.getElementById("random-block")
 const canvas = document.getElementById("gameCanvas");
 const ctx = canvas.getContext("2d");
 
@@ -9,13 +11,13 @@ const player = {
   x: canvasSize / 2,
   y: canvasSize / 2,
   xSpeed: 3,
-  ySpeed: -2,
+  ySpeed: -1,
   width: playerSize,
   height: playerSize,
   color: "white",
 };
 
-const blocks = [];
+let blocks = [];
 
 function gameLoop() {
   clearCanvas();
@@ -23,9 +25,7 @@ function gameLoop() {
   checkBlockBoundaries();
   movePlayer();
   drawPlayer();
-  if (loops % 100 === 0) randomBlock();
   drawBlocks();
-  loops++;
   requestAnimationFrame(gameLoop);
 }
 
@@ -43,6 +43,32 @@ function randomBlock() {
   });
 }
 
+canvas.addEventListener('click', function(e) {
+  var mouseX = e.clientX - canvas.getBoundingClientRect().left;
+  var mouseY = e.clientY - canvas.getBoundingClientRect().top;
+
+  blocks.push({
+    y: mouseY - 20,
+    x: mouseX - 20,
+    height: 40,
+    width: 40,
+  });
+});
+
+clearBlocksButton.addEventListener('click', function(e) {
+  blocks = [];
+}
+)
+randomBlockButton.addEventListener('click', function(e) {
+  blocks.push({
+    y: rng(canvasSize - 40),
+    x: rng(canvasSize - 40),
+    height: 40,
+    width: 40,
+  });
+})
+
+
 function checkBlockBoundaries() {
   {
     blocks.forEach((block) => {
@@ -52,14 +78,33 @@ function checkBlockBoundaries() {
         player.x > block.x &&
         player.x < block.x + block.width
       ) {
-        if (rng(2) > 1) {
-          player.xSpeed *= -1
-        } else {
-          player.ySpeed *= -1
-        }
+        const top = player.y - block.y;
+        const bottom = block.y + block.height - player.y;
+        const left = player.x - block.x;
+        const right = block.x + block.width - player.x;
+        xPositive = player.xSpeed > 0;
+        yPositive = player.ySpeed > 0;
+
+        const smallest = findSmallestVariable(top, bottom, left, right);
+        if (smallest === top)
+          player.ySpeed = yPositive ? -player.ySpeed : player.ySpeed;
+        if (smallest === bottom)
+          player.ySpeed = yPositive ? player.ySpeed : -player.ySpeed;
+        if (smallest === left)
+          player.xSpeed = xPositive ? -player.xSpeed : player.xSpeed;
+        if (smallest === right)
+          player.xSpeed = xPositive ? player.xSpeed : -player.xSpeed;
       }
     });
   }
+}
+
+function findSmallestVariable(a, b, c, d) {
+  let smallest = a;
+  if (b < smallest) smallest = b;
+  if (c < smallest) smallest = c;
+  if (d < smallest) smallest = d;
+  return smallest;
 }
 
 function drawBlocks() {
@@ -116,5 +161,7 @@ document.addEventListener("keydown", (event) => {
     player.x += 10;
   }
 });
+
+
 
 gameLoop();
