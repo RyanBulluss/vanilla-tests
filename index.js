@@ -52,10 +52,10 @@ function addBlock(e) {
   var mouseY = e.clientY - canvas.getBoundingClientRect().top;
 
   blocks.push({
-    y: mouseY - 10,
-    x: mouseX - 10,
-    height: 20,
-    width: 20,
+    y: mouseY - 20,
+    x: mouseX - 20,
+    height: 40,
+    width: 40,
   });
 }
 
@@ -94,10 +94,10 @@ function clearBlocks() {
 
 function randomBlock() {
   blocks.push({
-    y: rng(canvasSize - 20),
-    x: rng(canvasSize - 20),
-    height: 20,
-    width: 20,
+    y: rng(canvasSize - 40),
+    x: rng(canvasSize - 40),
+    height: 40,
+    width: 40,
   });
 }
 
